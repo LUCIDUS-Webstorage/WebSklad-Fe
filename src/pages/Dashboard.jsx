@@ -4,6 +4,10 @@ import "./Dashboard.css"; // Import CSS
 const Dashboard = () => {
   const [parts, setParts] = useState([]);
 
+
+  // .. Axios: Library for handling fetching of data
+  
+
   useEffect(() => {
     fetch("http://127.0.0.1:8000/parts/list")
       .then((response) => response.json())
