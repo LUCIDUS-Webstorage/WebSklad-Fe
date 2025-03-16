@@ -12,14 +12,18 @@ body {
   align-items: flex-start;
   gap: 20px;
   padding: 20px;
+  max-width: 100%;
+  overflow-x: hidden; /* Zabráni horizontálnemu posúvaniu */
 }
 
+/* Sidebar */
 .sidebar {
-  width: 300px;
+  width: 300px; /* Zmenšená šírka */
   border: 1px solid white;
   border-radius: 12px;
   background: #151545;
   flex-shrink: 0;
+  padding: 15px;
 }
 
 h2 {
@@ -27,18 +31,6 @@ h2 {
   font-size: 1.5em;
   margin: 0;
   padding: 10px 0;
-  position: relative;
-}
-
-h2::after {
-  content: '';
-  display: block;
-  width: 100%;
-  height: 1px;
-  background-color: white;
-  position: absolute;
-  bottom: 0;
-  left: 0;
 }
 
 .component-list {
@@ -46,47 +38,62 @@ h2::after {
   flex-direction: column;
   gap: 10px;
   margin-top: 10px;
-  padding: 0 20px 20px 20px;
 }
 
 .component-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 6px 12px;
+  justify-content: space-between;
+  padding: 8px 12px;
   border: 1px solid white;
   border-radius: 12px;
-  background: #151545;
+  background: #0a0a45;
 }
 
-.component-item span {
-  flex-grow: 1;
-  margin-right: 10px;
+/* Počet + - tlačidlá */
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
-.component-item button {
+.counter button {
+  background: none;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+  font-size: 1em;
+  padding: 4px 8px;
+  border-radius: 5px;
+}
+
+.counter input {
+  width: 35px;
+  text-align: center;
   background: none;
   border: none;
   color: white;
-  cursor: pointer;
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
-.component-item button:hover {
+/* Tlačidlo odstránenia */
+.delete-btn {
+  background: none;
+  border: none;
+  color: red;
+  cursor: pointer;
+  font-size: 1.5em;
+}
+
+.delete-btn:hover {
   opacity: 0.8;
 }
 
-.content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
+/* Kategórie */
 .categories {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr); /* 3 stĺpce */
+  gap: 15px; /* Zmenšený medzery */
 }
 
 .category-card {
@@ -94,7 +101,7 @@ h2::after {
   border-radius: 12px;
   background: #151545;
   text-align: center;
-  min-height: 80px;
+  min-height: 70px; /* Zmenšená výška */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,26 +113,53 @@ h2::after {
   border: none;
   color: white;
   cursor: pointer;
-  font-size: 1em;
+  font-size: 0.9em; /* Zmenšená veľkosť písma */
   width: 100%;
   height: 100%;
-  padding: 15px;
+  padding: 10px; /* Zmenšený padding */
 }
 
 .category-card button:hover {
   opacity: 0.8;
 }
 
+/* Grid pre súčiastky */
 .suciastky-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr); /* 4 stĺpce namiesto 6 */
+  gap: 15px; /* Zmenšený medzery */
 }
 
 .suciastka-box {
   border: 1px solid white;
   border-radius: 12px;
-  padding: 15px;
+  padding: 10px; /* Zmenšený padding */
   background: #151545;
   text-align: center;
+}
+
+.suciastka-box h3 {
+  margin: 8px 0; /* Zmenšený margin */
+  font-size: 1.1em; /* Zmenšená veľkosť písma */
+}
+
+.suciastka-box p {
+  margin: 4px 0; /* Zmenšený margin */
+  font-size: 0.9em; /* Zmenšená veľkosť písma */
+}
+
+/* Pridať tlačidlo */
+.add-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px; /* Zmenšený padding */
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 8px; /* Zmenšený margin */
+  font-size: 0.9em; /* Zmenšená veľkosť písma */
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
 }
