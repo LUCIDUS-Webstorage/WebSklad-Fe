@@ -7,7 +7,7 @@ import Login1 from "./pages/Login1";
 import Ucet from "./pages/Ucet";
 //import Dashboard from "./pages/Dashboard";
 //import PartsTest from "./pages/PartsTest";
-import Dashboard2 from "./pages/Dashboard2";
+//import Dashboard2 from "./pages/Dashboard2";
 
 /**
  * Use App.jsx as source for routing information
@@ -17,7 +17,7 @@ function App() {
   return (
     
      <Routes>
-        <Route index path="/" element={<Dashboard2 />} />
+        
         <Route index path="/home" element={<Home2 />} />
         <Route path="/login" element={<Login1 />} />
         <Route path="/ucet" element={<Ucet />} />
