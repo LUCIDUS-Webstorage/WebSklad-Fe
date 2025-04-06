@@ -88,7 +88,7 @@ const Home2 = () => {
                 {/* Kategórie */}
                 <div className="content">
                     <div className="categories">
-                        {['Pasívne súčiastky', 'Aktívne súčiastky', 'Mikrokontroléry', 'Logické prvky'].map((category, index) => (
+                        {['Pasívne súčiastky', 'Aktívne súčiastky', 'Mikrokontroléry', 'Logické prvky','Komponenty','Sety'].map((category, index) => (
                             <div className="category-card" key={index}>
                                 <button onClick={() => handleCategoryFilter(category.toLowerCase())}>
                                     {category}

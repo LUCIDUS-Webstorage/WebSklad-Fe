@@ -1,0 +1,74 @@
+.login-wrapper {
+  background-color: #050A35;
+  width: 300px;
+  margin: 50px auto;
+  font-family: Arial, sans-serif;
+}
+
+.role-selector {
+  display: flex;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.role-selector button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: black;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.role-selector button.active {
+  background: #61B9BF;
+  color: black;
+}
+
+.login-form {
+  background:#0C1459;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group input {
+  width: 92%;
+  padding: 10px;
+  border: 1px solid #050A35;
+  background-color: #050A35;
+  color: white;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 12px;
+  background: #000000;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+button[type="submit"]:disabled {
+  background: #000000;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: red;
+  margin: 10px 0;
+  text-align: center;
+  font-size: 14px;
+}
