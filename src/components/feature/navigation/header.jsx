@@ -17,14 +17,8 @@ const Header = ({ onSearchResults = () => {} }) => {
       // Konvertujeme odpoveď na pole, ak je objekt
       const resultsArray = Array.isArray(data) ? data : [data];
 
-      // Extrahujeme len name, value a count
-      const filteredResults = resultsArray.map(part => ({
-        name: part.name,
-        value: part.value,
-        count: part.count
-      }));
-
-      onSearchResults(filteredResults);
+      // Odosielame CELÝ objekt súčiastky, nie len filtered data
+      onSearchResults(resultsArray);
     } catch (error) {
       console.error('Chyba pri vyhľadávaní:', error);
     }
@@ -42,7 +36,7 @@ const Header = ({ onSearchResults = () => {} }) => {
           className={styles["search-box"]}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSearch()} // Opravené onKeyPress -> onKeyDown (nový štandard)
+          onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
         />
         <button className={styles["search-button"]} onClick={handleSearch}>🔍</button>
       </div>

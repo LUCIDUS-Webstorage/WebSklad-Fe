@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router";
 import './App.css';
-//import Dashboard from "./pages/Dashboard";
+import Suciastka from "./pages/Suciastka";
 import Home2 from "./pages/Home2";
 import Login1 from "./pages/Login1";
 //import Header from "./components/feature/navigation/header";
@@ -17,8 +17,9 @@ function App() {
   return (
     
      <Routes>
+        <Route path="/Suciastka" element={<Suciastka/>}/>
         <Route index path="/home" element={<Home2 />} />
-        <Route path="/login" element={<Login1 />} />
+        <Route path="/" element={<Login1 />} />
         <Route path="/ucet" element={<Ucet />} />
       </Routes>
     )}

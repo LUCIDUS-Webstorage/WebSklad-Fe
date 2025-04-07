@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router';
 import "./Home2.css"; // Import CSS
 import Header from "../components/feature/navigation/header";
 
@@ -8,13 +9,41 @@ const Home2 = () => {
     const [searchResults, setSearchResults] = useState([]); // Výsledky vyhľadávania
     const [filteredParts, setFilteredParts] = useState([]); // Súčiastky podľa kategórie
     const [currentCategory, setCurrentCategory] = useState(''); // Aktuálna kategória
+    const [images, setImages] = useState({}); // Mapa obrázkov podľa part_id
 
     useEffect(() => {
         fetch("http://127.0.0.1:8000/parts/list")
             .then(response => response.json())
-            .then(data => setParts(data))
+            .then(data => {
+                setParts(data);
+                // Načítaj obrázky pre všetky súčiastky
+                data.forEach(part => {
+                    fetchImage(part.part_id);
+                });
+            })
             .catch(error => console.error("Chyba pri fetchnutí:", error));
     }, []);
+
+    // Funkcia na načítanie obrázka
+    const fetchImage = (partId) => {
+        fetch(`http://127.0.0.1:8000/image/${partId}`)
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                }
+                return null;
+            })
+            .then(blob => {
+                if (blob) {
+                    const imageUrl = URL.createObjectURL(blob);
+                    setImages(prev => ({
+                        ...prev,
+                        [partId]: imageUrl
+                    }));
+                }
+            })
+            .catch(error => console.error("Chyba pri načítaní obrázka:", error));
+    };
 
     // Funkcia na pridanie súčiastky do zoznamu
     const addToCart = (part) => {
@@ -38,9 +67,18 @@ const Home2 = () => {
         setCart(cart.filter(item => item.uniqueKey !== uniqueKey));
     };
 
+    const navigate = useNavigate();
+
+
     // Funkcia na spracovanie vyhľadávania
     const handleSearchResults = (results) => {
         setSearchResults(results);
+    // Načítaj obrázky pre výsledky vyhľadávania
+            results.forEach(part => {
+            if (!images[part.part_id]) {
+                fetchImage(part.part_id);
+            }
+        });
     };
 
     // Funkcia na filtrovanie podľa kategórie
@@ -54,9 +92,18 @@ const Home2 = () => {
             }
             const data = await response.json();
             setFilteredParts(data); // Uložíme súčiastky pre danú kategóriu
+            // Načítaj obrázky pre filtrované súčiastky
+            data.forEach(part => {
+                if (!images[part.part_id]) {
+                    fetchImage(part.part_id);
+                }
+            });
         } catch (error) {
             console.error('Chyba pri filtrovaní podľa kategórie:', error);
         }
+    };
+    const handleSuciastkaClick = (part) => {
+        navigate('/Suciastka', { state: { part } });
     };
 
     return (
@@ -103,11 +150,21 @@ const Home2 = () => {
                     {/* Zoznam súčiastok alebo výsledky vyhľadávania */}
                     <div className="suciastky-grid">
                         {(searchResults.length > 0 ? searchResults : (filteredParts.length > 0 ? filteredParts : parts)).map((part) => (
-                            <div className="suciastka-box" key={part.part_id}>
+                            <div className="suciastka-box" key={part.part_id} onClick={() =>  handleSuciastkaClick(part)}>
+                                {images[part.part_id] && (
+                                    <img 
+                                        src={images[part.part_id]} 
+                                        alt={part.name} 
+                                        className="suciastka-image"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none'; // Skryť obrázok ak sa nepodarí načítať
+                                        }}
+                                    />
+                                )}
                                 <h3>{part.name}</h3>
                                 <p><strong>Hodnota:</strong> {part.value}</p>
                                 <p><strong>Počet:</strong> {part.count} ks</p>
-                                <button className="add-btn" onClick={() => addToCart(part)}>Pridať</button>
+                                <button className="add-btn" onClick={(e) => {e.stopPropagation(); addToCart(part);}}>Pridať</button>
                             </div>
                         ))}
                     </div>

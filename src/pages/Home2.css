@@ -13,17 +13,20 @@ body {
   gap: 20px;
   padding: 20px;
   max-width: 100%;
-  overflow-x: hidden; 
+  overflow-x: hidden;
 }
 
-/* Zoznam*/
+/* Sidebar - zoznam súčiastok */
 .sidebar {
-  width: 300px; 
+  width: 300px;
+  min-width: 300px; /* Pridané - fixná šírka */
   border: 1px solid white;
   border-radius: 12px;
   background: #151545;
-  flex-shrink: 0;
   padding: 15px;
+  position: sticky;
+  top: 20px;
+  height: fit-content;
 }
 
 h2 {
@@ -50,7 +53,6 @@ h2 {
   background: #0a0a45;
 }
 
-
 .counter {
   display: flex;
   align-items: center;
@@ -76,7 +78,6 @@ h2 {
   font-size: 1em;
 }
 
-
 .delete-btn {
   background: none;
   border: none;
@@ -89,11 +90,19 @@ h2 {
   opacity: 0.8;
 }
 
+/* Hlavný obsah */
+.content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0; /* Pridané - rieši problém s pretekaním */
+}
 
 .categories {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 15px; 
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 }
 
 .category-card {
@@ -101,7 +110,7 @@ h2 {
   border-radius: 12px;
   background: #151545;
   text-align: center;
-  min-height: 70px; 
+  min-height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,10 +122,10 @@ h2 {
   border: none;
   color: white;
   cursor: pointer;
-  font-size: 0.9em; 
+  font-size: 0.9em;
   width: 100%;
   height: 100%;
-  padding: 10px; 
+  padding: 10px;
 }
 
 .category-card button:hover {
@@ -125,16 +134,22 @@ h2 {
 
 .suciastky-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr); 
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 15px;
 }
 
 .suciastka-box {
   border: 1px solid white;
   border-radius: 12px;
-  padding: 10px; 
+  padding: 10px;
   background: #151545;
   text-align: center;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .suciastka-box h3 {
@@ -143,21 +158,32 @@ h2 {
 }
 
 .suciastka-box p {
-  margin: 4px 0; 
-  font-size: 0.9em; 
+  margin: 4px 0;
+  font-size: 0.9em;
 }
 
 .add-btn {
   background-color: #007bff;
   color: white;
   border: none;
-  padding: 8px; 
+  padding: 8px;
   cursor: pointer;
   border-radius: 5px;
-  margin-top: 8px; 
-  font-size: 0.9em; 
+  margin-top: 8px;
+  font-size: 0.9em;
+  width: 100%;
 }
 
 .add-btn:hover {
   background-color: #0056b3;
+}
+
+.suciastka-image {
+  border: 1px solid white;
+  border-radius: 12px;
+  max-width: 100px;
+  max-height: 100px;
+  margin: 0 auto 10px auto; 
+  object-fit: contain;
+  display: block; 
 }
