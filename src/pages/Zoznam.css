@@ -1,0 +1,87 @@
+.sidebar {
+    width: 300px;
+    min-width: 300px;
+    border: 1px solid white;
+    border-radius: 12px;
+    background: #151545;
+    padding: 15px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.component-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.component-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border: 1px solid white;
+    border-radius: 12px;
+    background: #0a0a45;
+}
+
+.counter {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.counter button {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+.counter input {
+    width: 35px;
+    text-align: center;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1em;
+}
+
+.delete-btn {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 1.5em;
+}
+
+.delete-btn:hover {
+    opacity: 0.8;
+}
+.borrow-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px;
+    margin-top: 15px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.borrow-btn:hover {
+    background-color: #218838;
+}
+
+.borrow-btn:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
