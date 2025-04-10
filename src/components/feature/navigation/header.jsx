@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router'; 
+import { NavLink, useNavigate } from 'react-router';
 import styles from './header.module.css';
 
 const Header = ({ onSearchResults = () => {} }) => {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -13,14 +14,41 @@ const Header = ({ onSearchResults = () => {} }) => {
         throw new Error('Chyba pri načítaní dát');
       }
       const data = await response.json();
-
-      // Konvertujeme odpoveď na pole, ak je objekt
       const resultsArray = Array.isArray(data) ? data : [data];
-
-      // Odosielame CELÝ objekt súčiastky, nie len filtered data
       onSearchResults(resultsArray);
     } catch (error) {
       console.error('Chyba pri vyhľadávaní:', error);
+    }
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault(); // Prevent immediate navigation
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.log('No token found');
+        navigate('/');
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token
+        }
+      });
+
+      if (response.ok) {
+        console.log('Logged out successfully');
+        localStorage.removeItem('token');
+        localStorage.removeItem('cart'); // Clear cart on logout
+        navigate('/');
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
   };
 
@@ -42,7 +70,7 @@ const Header = ({ onSearchResults = () => {} }) => {
       </div>
       <div className={styles["buttons"]}>
         <NavLink className={styles["icon-button"]} to={'/Ucet'}>Ronnie Coleman 👤</NavLink>
-        <button className={styles["icon-button"]}>🔔</button>
+        <NavLink className={styles["icon-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
       </div>
     </div>
   );

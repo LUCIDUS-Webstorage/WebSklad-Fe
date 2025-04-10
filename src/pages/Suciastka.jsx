@@ -1,65 +1,117 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import './Suciastka.css';
+import Zoznam from './Zoznam';
 
 const Suciastka = () => {
     const { state } = useLocation();
     const navigate = useNavigate();
     const part = state?.part;
+    const [image, setImage] = useState(null);
+    const [cart, setCart] = useState(() => {
+        const savedCart = localStorage.getItem('cart');
+        return savedCart ? JSON.parse(savedCart) : [];
+    });
+
+    useEffect(() => {
+        if (!part) {
+            navigate('/');
+            return;
+        }
+
+        fetch(`http://127.0.0.1:8000/image/${part.part_id}`)
+            .then(response => {
+                if (response.ok) return response.blob();
+                return null;
+            })
+            .then(blob => {
+                if (blob) {
+                    const imageUrl = URL.createObjectURL(blob);
+                    setImage(imageUrl);
+                }
+            })
+            .catch(error => console.error("Chyba pri načítaní obrázka:", error));
+
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }, [cart, part, navigate]);
 
     if (!part) {
-        navigate('/');
         return null;
     }
 
+    const addToCart = () => {
+        const newItem = {
+            ...part,
+            count: 1,
+            uniqueKey: `${part.part_id}-${Date.now()}`
+        };
+        setCart([...cart, newItem]);
+    };
+
+    const updateCount = (uniqueKey, change) => {
+        setCart(cart.map(item =>
+            item.uniqueKey === uniqueKey ? { ...item, count: Math.max(1, item.count + change) } : item
+        ));
+    };
+
+    const removeFromCart = (uniqueKey) => {
+        setCart(cart.filter(item => item.uniqueKey !== uniqueKey));
+    };
+
     return (
-        <div className="suciastka-container">
-            <div className="suciastka-header">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    ← Späť na zoznam
-                </button>
-                <h1>{part.name}</h1>
-            </div>
+        <div className="container">
+            <Zoznam 
+                cart={cart} 
+                updateCount={updateCount} 
+                removeFromCart={removeFromCart} 
+                setCart={setCart} 
+            />
+            
+            <div className="content">
+                <div className="suciastka-container">
+                    <button className="back-button" onClick={() => navigate(-1)}>
+                        ← Späť na zoznam
+                    </button>
 
-            <div className="suciastka-main-content">
-                <div className="suciastka-image-section">
-                    <div className="image-placeholder">
-                        <span>Obrázok súčiastky</span>
+                    <div className="suciastka-main-content">
+                        <div className="suciastka-image-section89">
+                            {image ? (
+                                <img 
+                                    src={image} 
+                                    alt={part.name} 
+                                    className="suciastka-image89"
+                                />
+                            ) : (
+                                <div className="image-placeholder89">
+                                    <span>Obrázok súčiastky</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="suciastka-info-section">
+                            <div className="suciastka-title">
+                                <h1>{part.name}</h1>
+                                <span className="suciastka-value">{part.value}</span>
+                            </div>
+                            
+                            <p className="stock-info">Počet: {part.count} ks</p>
+
+                            <button 
+                                className="add-to-list-btn"
+                                onClick={addToCart}
+                            >
+                                Pridať do zoznamu
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="separator"></div>
+
+                    <div className="suciastka-description">
+                        <h3>Popis:</h3>
+                        <p>funguje</p>
                     </div>
                 </div>
-
-                <div className="suciastka-info-section">
-                    <div className="price-section">
-                        <h2>{part.value} €</h2>
-                        <p className="price-without-vat">(bez DPH: {(parseFloat(part.value) * 0.8).toFixed(2)}€)</p>
-                    </div>
-
-                    <div className="stock-info">
-                        <p>Na sklade: {part.count} ks</p>
-                    </div>
-
-                    <div className="action-buttons">
-                        <button 
-                            className="add-to-list-btn"
-                            onClick={() => alert(`Súčiastka ${part.name} bola pridaná do zoznamu`)}
-                        >
-                            Pridať do zoznamu
-                        </button>
-                        <button className="favorite-btn">
-                            Pridať medzi obľúbené
-                        </button>
-                    </div>
-
-                    <div className="details-section">
-                        <p><strong>Katalógové číslo:</strong> {part.part_id}</p>
-                        <p><strong>Kategória:</strong> {part.category || "Nešpecifikované"}</p>
-                    </div>
-                </div>
-            </div>
-
-            <div className="suciastka-description">
-                <h3>Popis súčiastky</h3>
-                <p>Funguje</p>
             </div>
         </div>
     );
