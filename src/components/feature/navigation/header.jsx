@@ -22,7 +22,7 @@ const Header = ({ onSearchResults = () => {} }) => {
   };
 
   const handleLogout = async (e) => {
-    e.preventDefault(); // Prevent immediate navigation
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -42,7 +42,7 @@ const Header = ({ onSearchResults = () => {} }) => {
       if (response.ok) {
         console.log('Logged out successfully');
         localStorage.removeItem('token');
-        localStorage.removeItem('cart'); // Clear cart on logout
+        localStorage.removeItem('cart');
         navigate('/');
       } else {
         console.error('Logout failed');
@@ -53,9 +53,9 @@ const Header = ({ onSearchResults = () => {} }) => {
   };
 
   return (
-    <div className={styles["header"]}>
-      <div className={styles["left"]}>
-        <span className={styles["title"]}>LUCIDUS</span>
+    <div className={styles.header}>
+      <div className={styles.left}>
+        <NavLink to="/home" className={styles.title}>LUCIDUS</NavLink>
       </div>
       <div className={styles["search-container"]}>
         <input
@@ -68,9 +68,9 @@ const Header = ({ onSearchResults = () => {} }) => {
         />
         <button className={styles["search-button"]} onClick={handleSearch}>🔍</button>
       </div>
-      <div className={styles["buttons"]}>
-        <NavLink className={styles["icon-button"]} to={'/Ucet'}>Ronnie Coleman 👤</NavLink>
-        <NavLink className={styles["icon-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
+      <div className={styles.buttons}>
+        <NavLink className={styles["profile-button"]} to={'/Ucet'}>Ronnie Coleman 👤</NavLink>
+        <NavLink className={styles["logout-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
       </div>
     </div>
   );
