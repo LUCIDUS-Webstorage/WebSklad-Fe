@@ -10,7 +10,7 @@ const Login1 = () => {
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isTeacher, setIsTeacher] = useState(true); // true = učiteľ, false = žiak
+  const [isTeacher, setIsTeacher] = useState(true);
 
   const navigate = useNavigate();
 
@@ -29,7 +29,6 @@ const Login1 = () => {
 
     try {
       if (isTeacher) {
-        // Len pre učiteľa - odoslanie na backend
         const response = await fetch('http://127.0.0.1:8000/login', {
           method: 'POST',
           headers: {
@@ -47,11 +46,12 @@ const Login1 = () => {
           throw new Error(data.message || 'Nesprávne prihlasovacie údaje');
         }
 
-        console.log('Prijatý token:', data.token); // Vypíše token do konzoly
         localStorage.setItem('token', data.token);
+        localStorage.setItem('username', credentials.username);
+        localStorage.setItem('role', 'teacher');
       } else {
-        // Pre žiaka - len presmerovanie bez tokenu
-        console.log('Žiak sa prihlásil bez tokenu');
+        localStorage.setItem('username', credentials.name);
+        localStorage.setItem('role', 'student');
       }
 
       navigate('/home');
@@ -81,7 +81,7 @@ const Login1 = () => {
           Žiak
         </button>
       </div>
-
+    
       <form className="login-form" onSubmit={handleSubmit}>
         {isTeacher ? (
           <>

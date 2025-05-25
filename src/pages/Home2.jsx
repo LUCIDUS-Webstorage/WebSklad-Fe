@@ -4,6 +4,7 @@ import "./Home2.css";
 import Header from "../components/feature/navigation/header";
 import Zoznam from "./Zoznam";
 
+//Creating constants
 const Home2 = () => {
     const [parts, setParts] = useState([]);
     const [cart, setCart] = useState(() => {

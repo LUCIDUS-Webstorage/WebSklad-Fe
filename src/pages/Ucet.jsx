@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import styles from './Ucet.module.css';
 import Header from "../components/feature/navigation/header";
 
@@ -21,53 +21,44 @@ const Ucet = () => {
     value: ''
   });
   const [partsList, setPartsList] = useState([]);
+  const [usersData, setUsersData] = useState({});
+  const [usersList, setUsersList] = useState([]);
+  const [newUser, setNewUser] = useState({
+    username: '',
+    password: '',
+    rights: 'all'
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchPartsList();
   }, []);
 
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.log('No token found');
-        navigate('/');
-        return;
-      }
-
-      const response = await fetch('http://127.0.0.1:8000/logout', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'token': token
-        }
-      });
-
-      if (response.ok) {
-        console.log('Logged out successfully');
-        localStorage.removeItem('token');
-        localStorage.removeItem('cart');
-        navigate('/');
-      } else {
-        console.error('Logout failed');
-      }
-    } catch (error) {
-      console.error('Error during logout:', error);
-    }
-  };
-
   const fetchPartsList = async () => {
     try {
       const response = await fetch('http://127.0.0.1:8000/parts/list');
-      if (!response.ok) {
-        throw new Error('Failed to fetch parts list');
-      }
+      if (!response.ok) throw new Error('Failed to fetch parts list');
       const data = await response.json();
       setPartsList(data);
     } catch (err) {
       console.error('Error fetching parts list:', err);
+    }
+  };
+
+  const fetchUsers = async (userIds) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://127.0.0.1:8000/user/list/${userIds.join(',')}`, {
+        headers: { 'token': token }
+      });
+      const data = await response.json();
+      const usersMap = {};
+      data.forEach(user => {
+        usersMap[user.user_id] = user.username;
+      });
+      setUsersData(usersMap);
+    } catch (error) {
+      console.error('Chyba pri načítaní používateľov:', error);
     }
   };
 
@@ -76,23 +67,19 @@ const Ucet = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Nenašiel sa token');
-      }
+      if (!token) throw new Error('Nenašiel sa token');
 
       const response = await fetch('http://127.0.0.1:8000/history', {
         method: 'GET',
-        headers: {
-          'token': token
-        }
+        headers: { 'token': token }
       });
 
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa načítať históriu');
-      }
+      if (!response.ok) throw new Error('Nepodarilo sa načítať históriu');
 
       const data = await response.json();
       setHistoryData(data);
+      const userIds = [...new Set(data.map(item => item.user_id))];
+      await fetchUsers(userIds);
     } catch (err) {
       console.error('Chyba pri načítaní histórie:', err);
       setError(err.message);
@@ -106,20 +93,14 @@ const Ucet = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Nenašiel sa token');
-      }
+      if (!token) throw new Error('Nenašiel sa token');
 
       const response = await fetch('http://127.0.0.1:8000/parts/borrowed/list', {
         method: 'GET',
-        headers: {
-          'token': token
-        }
+        headers: { 'token': token }
       });
 
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa načítať vypožičané súčiastky');
-      }
+      if (!response.ok) throw new Error('Nepodarilo sa načítať vypožičané súčiastky');
 
       const data = await response.json();
       setBorrowedData(data);
@@ -131,15 +112,26 @@ const Ucet = () => {
     }
   };
 
+  const fetchUsersList = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://127.0.0.1:8000/user/list/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', {
+        headers: { 'token': token }
+      });
+      const data = await response.json();
+      setUsersList(data);
+    } catch (error) {
+      console.error('Chyba pri načítaní používateľov:', error);
+    }
+  };
+
   const handleAddPart = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Nenašiel sa token');
-      }
+      if (!token) throw new Error('Nenašiel sa token');
 
       const response = await fetch('http://127.0.0.1:8000/parts/create', {
         method: 'POST',
@@ -156,9 +148,7 @@ const Ucet = () => {
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa pridať súčiastku');
-      }
+      if (!response.ok) throw new Error('Nepodarilo sa pridať súčiastku');
 
       setAddPartData({
         category: '',
@@ -167,6 +157,7 @@ const Ucet = () => {
         value: '',
         count: ''
       });
+      fetchPartsList();
     } catch (err) {
       console.error('Chyba pri pridávaní súčiastky:', err);
       setError(err.message);
@@ -181,18 +172,14 @@ const Ucet = () => {
     setError('');
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Nenašiel sa token');
-      }
+      if (!token) throw new Error('Nenašiel sa token');
 
       const partToDelete = partsList.find(part => 
         part.name === deletePartData.name && 
         part.value === deletePartData.value
       );
 
-      if (!partToDelete) {
-        throw new Error('Súčiastka s daným názvom a hodnotou nebola nájdená');
-      }
+      if (!partToDelete) throw new Error('Súčiastka s daným názvom a hodnotou nebola nájdená');
 
       const response = await fetch(`http://127.0.0.1:8000/parts/delete/${partToDelete.part_id}`, {
         method: 'DELETE',
@@ -202,14 +189,9 @@ const Ucet = () => {
         }
       });
 
-      if (!response.ok) {
-        throw new Error('Nepodarilo sa vymazať súčiastku');
-      }
+      if (!response.ok) throw new Error('Nepodarilo sa vymazať súčiastku');
 
-      setDeletePartData({
-        name: '',
-        value: ''
-      });
+      setDeletePartData({ name: '', value: '' });
       fetchPartsList();
     } catch (err) {
       console.error('Chyba pri vymazávaní súčiastky:', err);
@@ -219,17 +201,80 @@ const Ucet = () => {
     }
   };
 
+  const handleReturnPart = async (borrowedId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://127.0.0.1:8000/parts/return/${borrowedId}`, {
+        method: 'POST',
+        headers: { 'token': token }
+      });
+      if (response.ok) {
+        setBorrowedData(prev => prev.filter(item => item.borrowed_id !== borrowedId));
+      }
+    } catch (error) {
+      console.error('Chyba pri vrátení súčiastky:', error);
+    }
+  };
+
+  const handleReturnAll = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const borrowedIds = borrowedData.map(item => item.borrowed_id).join(',');
+      const response = await fetch(`http://127.0.0.1:8000/parts/return/${borrowedIds}`, {
+        method: 'POST',
+        headers: { 'token': token }
+      });
+      if (response.ok) {
+        setBorrowedData([]);
+      }
+    } catch (error) {
+      console.error('Chyba pri vrátení súčiastok:', error);
+    }
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('http://127.0.0.1:8000/user/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token
+        },
+        body: JSON.stringify(newUser)
+      });
+      if (response.ok) {
+        setNewUser({ username: '', password: '', rights: 'all' });
+        fetchUsersList();
+      }
+    } catch (error) {
+      console.error('Chyba pri vytváraní používateľa:', error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://127.0.0.1:8000/user/delete/${userId}`, {
+        method: 'DELETE',
+        headers: { 'token': token }
+      });
+      if (response.ok) {
+        fetchUsersList();
+      }
+    } catch (error) {
+      console.error('Chyba pri odstraňovaní používateľa:', error);
+    }
+  };
+
   const handleTabClick = (tab) => {
     setActiveTab(tab);
-    if (tab === 'history') {
-      fetchHistory();
-    } else if (tab === 'borrowed') {
-      fetchBorrowed();
-    } else if (tab === 'add_part') {
-      fetchPartsList();
-    } else if (tab === 'delete_part') {
-      fetchPartsList();
-    }
+    if (tab === 'history') fetchHistory();
+    else if (tab === 'borrowed') fetchBorrowed();
+    else if (tab === 'add_part') fetchPartsList();
+    else if (tab === 'delete_part') fetchPartsList();
+    else if (tab === 'users') fetchUsersList();
   };
 
   const formatDateTime = (datetime) => {
@@ -240,18 +285,46 @@ const Ucet = () => {
 
   const handleAddPartChange = (e) => {
     const { name, value } = e.target;
-    setAddPartData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setAddPartData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleDeletePartChange = (e) => {
     const { name, value } = e.target;
-    setDeletePartData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setDeletePartData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleNewUserChange = (e) => {
+    const { name, value } = e.target;
+    setNewUser(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/');
+        return;
+      }
+
+      const response = await fetch('http://127.0.0.1:8000/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token
+        }
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
+        localStorage.removeItem('cart');
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   return (
@@ -260,11 +333,13 @@ const Ucet = () => {
       <div className={styles["ucet-container"]}>
         <div className={styles["left-menu"]}>
           <div className={styles["profile-section"]}>
-            <div className={styles.avatar}>JM</div>
-            <h2>Jozko Mrkva</h2>
+            <div className={styles.avatar}>
+              {localStorage.getItem('username')?.charAt(0).toUpperCase() || 'JM'}
+            </div>
+            <h2>{localStorage.getItem('username') || 'Užívateľ'}</h2>
           </div>
           
-          <NavLink className={styles["logout-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
+          <button className={styles["logout-button"]} onClick={handleLogout}>Odhlásiť sa</button>
           
           <div className={styles.divider}></div>
           
@@ -299,6 +374,12 @@ const Ucet = () => {
             >
               Vymazať súčiastku
             </button>
+            <button 
+              className={`${styles["menu-button"]} ${activeTab === 'users' ? styles.active : ''}`}
+              onClick={() => handleTabClick('users')}
+            >
+              Používatelia
+            </button>
           </div>
         </div>
 
@@ -322,7 +403,7 @@ const Ucet = () => {
                     const [date, time] = formatDateTime(item.time);
                     return (
                       <tr key={index}>
-                        <td>{item.user_id}</td>
+                        <td>{usersData[item.user_id] || item.user_id}</td>
                         <td>{item.operation}</td>
                         <td>{date}</td>
                         <td>{time}</td>
@@ -335,29 +416,50 @@ const Ucet = () => {
           )}
 
           {activeTab === 'borrowed' && (
-            <div className={styles["borrowed-table"]}>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Názov súčiastky</th>
-                    <th>Hodnota</th>
-                    <th>Počet vypožičaných (ks)</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {borrowedData.map((item, index) => {
-                    const part = partsList.find(p => p.part_id === item.part_id);
-                    return (
-                      <tr key={index}>
-                        <td>{part ? part.name : `Neznáma súčiastka (ID: ${item.part_id})`}</td>
-                        <td>{part ? part.value : 'N/A'}</td>
-                        <td>{item.count}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+            <>
+              <div className={styles["borrowed-table"]}>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Názov súčiastky</th>
+                      <th>Hodnota</th>
+                      <th>Počet vypožičaných (ks)</th>
+                      <th>Akcia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {borrowedData.map((item) => {
+                      const part = partsList.find(p => p.part_id === item.part_id);
+                      return (
+                        <tr key={item.borrowed_id}>
+                          <td>{part ? part.name : `Neznáma súčiastka (ID: ${item.part_id})`}</td>
+                          <td>{part ? part.value : 'N/A'}</td>
+                          <td>{item.count}</td>
+                          <td>
+                            <button 
+                              onClick={() => handleReturnPart(item.borrowed_id)}
+                              className={styles["return-button"]}
+                            >
+                              Vrátiť
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              {borrowedData.length > 0 && (
+                <div className={styles["return-all-container"]}>
+                  <button 
+                    onClick={handleReturnAll}
+                    className={styles["return-all-button"]}
+                  >
+                    Vrátiť všetko ({borrowedData.length})
+                  </button>
+                </div>
+              )}
+            </>
           )}
 
           {activeTab === 'add_part' && (
@@ -443,6 +545,75 @@ const Ucet = () => {
                 </div>
                 <button type="submit" className={`${styles["submit-button"]} ${styles.delete}`}>Vymazať súčiastku</button>
               </form>
+            </div>
+          )}
+
+          {activeTab === 'users' && (
+            <div className={styles["users-container"]}>
+              <div className={styles["users-create"]}>
+                <h3>Vytvoriť používateľa</h3>
+                <form onSubmit={handleCreateUser}>
+                  <div className={styles["form-group"]}>
+                    <label>Prihlasovacie meno:</label>
+                    <input
+                      type="text"
+                      name="username"
+                      value={newUser.username}
+                      onChange={handleNewUserChange}
+                      required
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label>Heslo:</label>
+                    <input
+                      type="password"
+                      name="password"
+                      value={newUser.password}
+                      onChange={handleNewUserChange}
+                      required
+                    />
+                  </div>
+                  <div className={styles["form-group"]}>
+                    <label>Práva:</label>
+                    <input
+                      type="text"
+                      name="rights"
+                      value="all"
+                      readOnly
+                    />
+                  </div>
+                  <button type="submit" className={styles["submit-button"]}>
+                    Vytvoriť používateľa
+                  </button>
+                </form>
+              </div>
+              
+              <div className={styles["users-delete"]}>
+                <h3>Odstrániť používateľa</h3>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Meno</th>
+                      <th>Akcia</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {usersList.map(user => (
+                      <tr key={user.user_id}>
+                        <td>{user.username}</td>
+                        <td>
+                          <button 
+                            onClick={() => handleDeleteUser(user.user_id)}
+                            className={styles["delete-button"]}
+                          >
+                            Odstrániť
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Zoznam.css';
 
-const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {  // Pridané setCart ako prop
+const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
     const handleBorrow = async () => {
         if (cart.length === 0) return;
 
@@ -29,13 +29,8 @@ const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {  // Pridan�
                 throw new Error(errorData.message || 'Chyba pri vykonávaní požiadavky');
             }
 
-            // Úspešné odoslanie - vyprázdniť košík
-            setCart([]);  // Toto nahradí localStorage.removeItem('cart') a window.location.reload()
-            
-            // Môžete pridať nejaké jemné upozornenie namiesto alertu
-            // Napríklad pomocou toast notifikácie alebo len console.log
-            console.log('Súčiastky boli úspešne vybrané');
-
+            setCart([]);
+            alert('Súčiastky boli úspešne vybrané');
         } catch (error) {
             console.error('Chyba:', error);
             alert(`Nastala chyba: ${error.message}`);
@@ -62,6 +57,7 @@ const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {  // Pridan�
                         <button 
                             className="borrow-btn"
                             onClick={handleBorrow}
+                            disabled={cart.length === 0}
                         >
                             Vybrať súčiastky
                         </button>

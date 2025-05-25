@@ -42,6 +42,8 @@ const Header = ({ onSearchResults = () => {} }) => {
       if (response.ok) {
         console.log('Logged out successfully');
         localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('role');
         localStorage.removeItem('cart');
         navigate('/');
       } else {
@@ -69,7 +71,9 @@ const Header = ({ onSearchResults = () => {} }) => {
         <button className={styles["search-button"]} onClick={handleSearch}>🔍</button>
       </div>
       <div className={styles.buttons}>
-        <NavLink className={styles["profile-button"]} to={'/Ucet'}>Ronnie Coleman 👤</NavLink>
+        <NavLink className={styles["profile-button"]} to={'/Ucet'}>
+          {localStorage.getItem('username') || 'Užívateľ'} 👤
+        </NavLink>
         <NavLink className={styles["logout-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
       </div>
     </div>

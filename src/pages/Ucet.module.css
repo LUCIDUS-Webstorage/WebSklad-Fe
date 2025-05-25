@@ -52,6 +52,7 @@
   transition: all 0.3s;
   text-align: center;
   text-decoration: none;
+  width: 100%;
 }
 
 .logout-button:hover {
@@ -186,5 +187,67 @@ tr:last-child td {
 }
 
 .submit-button.delete:hover {
+  background-color: #dc2626;
+}
+
+.users-container {
+  display: flex;
+  gap: 30px;
+}
+
+.users-create, .users-delete {
+  flex: 1;
+  background-color: #1e293b;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.return-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.return-button:hover {
+  background-color: #c82333;
+}
+
+.return-all-container {
+  margin-top: 20px;
+  text-align: right;
+}
+
+.return-all-button {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.return-all-button:hover {
+  background-color: #c82333;
+}
+
+.return-all-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-button:hover {
   background-color: #dc2626;
 }
