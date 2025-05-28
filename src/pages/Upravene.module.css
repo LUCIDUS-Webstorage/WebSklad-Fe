@@ -1,0 +1,91 @@
+.container {
+  padding: 20px;
+  background-color: #0a0a32;
+  color: white;
+  min-height: 100vh;
+}
+
+.backButton {
+  background: none;
+  border: none;
+  color: white;
+  padding: 8px 0;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.backButton:hover {
+  color: #007bff;
+}
+
+.mainContent {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.imageSection {
+  flex: 0 0 400px;
+}
+
+.partImage {
+  width: 400px;
+  height: 400px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.imagePlaceholder {
+  width: 400px;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #aaa;
+  font-size: 18px;
+  background-color: #151545;
+  border-radius: 4px;
+}
+
+.formSection {
+  flex: 1;
+}
+
+.formSection h1 {
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  margin-bottom: 15px;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #334155;
+  background-color: #0f172a;
+  color: white;
+}
+
+.submitButton {
+  background-color: #61B9FB;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 20px;
+}
+
+.submitButton:hover {
+  background-color: #4aa8e8;
+}

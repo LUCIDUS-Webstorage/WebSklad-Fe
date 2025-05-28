@@ -4,22 +4,11 @@ import styles from './Ucet.module.css';
 import Header from "../components/feature/navigation/header";
 
 const Ucet = () => {
-  const [activeTab, setActiveTab] = useState('notifications');
+  const [activeTab, setActiveTab] = useState('history');
   const [historyData, setHistoryData] = useState([]);
   const [borrowedData, setBorrowedData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [addPartData, setAddPartData] = useState({
-    category: '',
-    sub_category: '',
-    name: '',
-    value: '',
-    count: ''
-  });
-  const [deletePartData, setDeletePartData] = useState({
-    name: '',
-    value: ''
-  });
   const [partsList, setPartsList] = useState([]);
   const [usersData, setUsersData] = useState({});
   const [usersList, setUsersList] = useState([]);
@@ -27,6 +16,14 @@ const Ucet = () => {
     username: '',
     password: '',
     rights: 'all'
+  });
+  const [addPartData, setAddPartData] = useState({
+    category: '',
+    sub_category: '',
+    name: '',
+    value: '',
+    count: '',
+    min_count: ''
   });
   const navigate = useNavigate();
 
@@ -77,7 +74,8 @@ const Ucet = () => {
       if (!response.ok) throw new Error('Nepodarilo sa načítať históriu');
 
       const data = await response.json();
-      setHistoryData(data);
+      // Zoradenie od najnovšej po najstaršiu
+      setHistoryData(data.reverse());
       const userIds = [...new Set(data.map(item => item.user_id))];
       await fetchUsers(userIds);
     } catch (err) {
@@ -144,7 +142,8 @@ const Ucet = () => {
           sub_category: addPartData.sub_category || null,
           name: addPartData.name,
           value: addPartData.value,
-          count: parseInt(addPartData.count)
+          count: parseInt(addPartData.count),
+          min_count: addPartData.min_count ? parseInt(addPartData.min_count) : null
         })
       });
 
@@ -155,46 +154,12 @@ const Ucet = () => {
         sub_category: '',
         name: '',
         value: '',
-        count: ''
+        count: '',
+        min_count: ''
       });
       fetchPartsList();
     } catch (err) {
       console.error('Chyba pri pridávaní súčiastky:', err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDeletePart = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('Nenašiel sa token');
-
-      const partToDelete = partsList.find(part => 
-        part.name === deletePartData.name && 
-        part.value === deletePartData.value
-      );
-
-      if (!partToDelete) throw new Error('Súčiastka s daným názvom a hodnotou nebola nájdená');
-
-      const response = await fetch(`http://127.0.0.1:8000/parts/delete/${partToDelete.part_id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'token': token
-        }
-      });
-
-      if (!response.ok) throw new Error('Nepodarilo sa vymazať súčiastku');
-
-      setDeletePartData({ name: '', value: '' });
-      fetchPartsList();
-    } catch (err) {
-      console.error('Chyba pri vymazávaní súčiastky:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -230,6 +195,25 @@ const Ucet = () => {
     } catch (error) {
       console.error('Chyba pri vrátení súčiastok:', error);
     }
+  };
+
+  const handleDeletePart = async (partId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://127.0.0.1:8000/parts/delete/${partId}`, {
+        method: 'DELETE',
+        headers: { 'token': token }
+      });
+      if (response.ok) {
+        fetchPartsList();
+      }
+    } catch (error) {
+      console.error('Chyba pri vymazávaní súčiastky:', error);
+    }
+  };
+
+  const handleNavigateToEdit = (part) => {
+    navigate('/upravene', { state: { part } });
   };
 
   const handleCreateUser = async (e) => {
@@ -272,8 +256,7 @@ const Ucet = () => {
     setActiveTab(tab);
     if (tab === 'history') fetchHistory();
     else if (tab === 'borrowed') fetchBorrowed();
-    else if (tab === 'add_part') fetchPartsList();
-    else if (tab === 'delete_part') fetchPartsList();
+    else if (tab === 'parts') fetchPartsList();
     else if (tab === 'users') fetchUsersList();
   };
 
@@ -286,11 +269,6 @@ const Ucet = () => {
   const handleAddPartChange = (e) => {
     const { name, value } = e.target;
     setAddPartData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleDeletePartChange = (e) => {
-    const { name, value } = e.target;
-    setDeletePartData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleNewUserChange = (e) => {
@@ -345,12 +323,6 @@ const Ucet = () => {
           
           <div className={styles["menu-items"]}>
             <button 
-              className={`${styles["menu-button"]} ${activeTab === 'notifications' ? styles.active : ''}`}
-              onClick={() => handleTabClick('notifications')}
-            >
-              Upozornenia
-            </button>
-            <button 
               className={`${styles["menu-button"]} ${activeTab === 'history' ? styles.active : ''}`}
               onClick={() => handleTabClick('history')}
             >
@@ -363,16 +335,16 @@ const Ucet = () => {
               Vypožičané
             </button>
             <button 
+              className={`${styles["menu-button"]} ${activeTab === 'parts' ? styles.active : ''}`}
+              onClick={() => handleTabClick('parts')}
+            >
+              Súčiastky
+            </button>
+            <button 
               className={`${styles["menu-button"]} ${activeTab === 'add_part' ? styles.active : ''}`}
               onClick={() => handleTabClick('add_part')}
             >
               Pridať súčiastku
-            </button>
-            <button 
-              className={`${styles["menu-button"]} ${activeTab === 'delete_part' ? styles.active : ''}`}
-              onClick={() => handleTabClick('delete_part')}
-            >
-              Vymazať súčiastku
             </button>
             <button 
               className={`${styles["menu-button"]} ${activeTab === 'users' ? styles.active : ''}`}
@@ -462,6 +434,47 @@ const Ucet = () => {
             </>
           )}
 
+          {activeTab === 'parts' && (
+            <div className={styles["parts-table"]}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Názov</th>
+                    <th>Hodnota</th>
+                    <th>Počet</th>
+                    <th>Upraviť</th>
+                    <th>Odstrániť</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {partsList.map((part) => (
+                    <tr key={part.part_id}>
+                      <td>{part.name}</td>
+                      <td>{part.value}</td>
+                      <td>{part.count}</td>
+                      <td>
+                        <button 
+                          onClick={() => handleNavigateToEdit(part)}
+                          className={styles["edit-button"]}
+                        >
+                          Upraviť
+                        </button>
+                      </td>
+                      <td>
+                        <button 
+                          onClick={() => handleDeletePart(part.part_id)}
+                          className={styles["delete-button"]}
+                        >
+                          Odstrániť
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
           {activeTab === 'add_part' && (
             <div className={styles["form-container"]}>
               <form onSubmit={handleAddPart}>
@@ -512,38 +525,22 @@ const Ucet = () => {
                     value={addPartData.count}
                     onChange={handleAddPartChange}
                     required
-                    min="1"
-                  />
-                </div>
-                <button type="submit" className={styles["submit-button"]}>Pridať súčiastku</button>
-              </form>
-            </div>
-          )}
-
-          {activeTab === 'delete_part' && (
-            <div className={styles["form-container"]}>
-              <form onSubmit={handleDeletePart}>
-                <div className={styles["form-group"]}>
-                  <label>Názov súčiastky:</label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={deletePartData.name}
-                    onChange={handleDeletePartChange}
-                    required
+                    min="0"
                   />
                 </div>
                 <div className={styles["form-group"]}>
-                  <label>Hodnota:</label>
+                  <label>Minimálny počet:</label>
                   <input
-                    type="text"
-                    name="value"
-                    value={deletePartData.value}
-                    onChange={handleDeletePartChange}
-                    required
+                    type="number"
+                    name="min_count"
+                    value={addPartData.min_count}
+                    onChange={handleAddPartChange}
+                    min="0"
                   />
                 </div>
-                <button type="submit" className={`${styles["submit-button"]} ${styles.delete}`}>Vymazať súčiastku</button>
+                <button type="submit" className={styles["submit-button"]}>
+                  Pridať súčiastku
+                </button>
               </form>
             </div>
           )}
@@ -616,8 +613,6 @@ const Ucet = () => {
               </div>
             </div>
           )}
-
-          {activeTab === 'notifications' && <div></div>}
         </div>
       </div>
     </>

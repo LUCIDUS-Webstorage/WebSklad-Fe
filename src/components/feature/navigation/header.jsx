@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import styles from './header.module.css';
 
 const Header = ({ onSearchResults = () => {} }) => {
   const [query, setQuery] = useState('');
+  const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
+
+  // Kontrola tokenu pri načítaní komponenty
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setHasToken(!!token);
+  }, []);
 
   const handleSearch = async () => {
     if (!query.trim()) return;
@@ -45,6 +52,7 @@ const Header = ({ onSearchResults = () => {} }) => {
         localStorage.removeItem('username');
         localStorage.removeItem('role');
         localStorage.removeItem('cart');
+        setHasToken(false); // Aktualizujeme stav
         navigate('/');
       } else {
         console.error('Logout failed');
@@ -59,6 +67,8 @@ const Header = ({ onSearchResults = () => {} }) => {
       <div className={styles.left}>
         <NavLink to="/home" className={styles.title}>LUCIDUS</NavLink>
       </div>
+      
+      {/* Search sa zobrazuje vždy */}
       <div className={styles["search-container"]}>
         <input
           type="text"
@@ -70,11 +80,28 @@ const Header = ({ onSearchResults = () => {} }) => {
         />
         <button className={styles["search-button"]} onClick={handleSearch}>🔍</button>
       </div>
+      
       <div className={styles.buttons}>
-        <NavLink className={styles["profile-button"]} to={'/Ucet'}>
-          {localStorage.getItem('username') || 'Užívateľ'} 👤
+        {/* Nové tlačidlo pre Schémy - zobrazuje sa vždy */}
+        <NavLink className={styles["schemy-button"]} to="/Schemy">
+          Schémy
         </NavLink>
-        <NavLink className={styles["logout-button"]} to="/" onClick={handleLogout}>Odhlásiť sa</NavLink>
+        
+        {/* Účet button sa zobrazuje len ak má token */}
+        {hasToken && (
+          <NavLink className={styles["profile-button"]} to={'/Ucet'}>
+            {localStorage.getItem('username') || 'Užívateľ'} 👤
+          </NavLink>
+        )}
+        
+        {/* Logout/Odísť button sa zobrazuje vždy */}
+        <NavLink 
+          className={styles["logout-button"]} 
+          to="/" 
+          onClick={hasToken ? handleLogout : undefined}
+        >
+          {hasToken ? 'Odhlásiť sa' : 'Odísť'}
+        </NavLink>
       </div>
     </div>
   );

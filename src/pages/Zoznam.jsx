@@ -1,7 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Zoznam.css';
 
 const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
+    const [hasToken, setHasToken] = useState(false);
+
+    // Kontrola tokenu pri načítaní komponenty
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        setHasToken(!!token);
+    }, []);
+
     const handleBorrow = async () => {
         if (cart.length === 0) return;
 
@@ -54,13 +62,16 @@ const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
                                 <button className="delete-btn" onClick={() => removeFromCart(item.uniqueKey)}>🗑️</button>
                             </div>
                         ))}
-                        <button 
-                            className="borrow-btn"
-                            onClick={handleBorrow}
-                            disabled={cart.length === 0}
-                        >
-                            Vybrať súčiastky
-                        </button>
+                        {/* Tlačidlo sa zobrazuje len ak má token */}
+                        {hasToken && (
+                            <button 
+                                className="borrow-btn"
+                                onClick={handleBorrow}
+                                disabled={cart.length === 0}
+                            >
+                                Vybrať súčiastky
+                            </button>
+                        )}
                     </>
                 ) : (
                     <p>Žiadne súčiastky v zozname.</p>

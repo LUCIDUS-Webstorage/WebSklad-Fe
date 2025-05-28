@@ -20,7 +20,6 @@
   font-size: 28px;
   color: white;
   text-decoration: none;
-  /*margin-left: 120px;*/
   letter-spacing: 1px;
 }
 
@@ -31,7 +30,6 @@
   flex-grow: 1;
   justify-content: center;
   max-width: 600px;
- 
 }
 
 .search-box {
@@ -58,6 +56,28 @@
   display: flex;
   gap: 15px;
   align-items: center;
+}
+
+/* Nový štýl pre tlačidlo Schémy */
+.schemy-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: 1px solid #3a3a4a;
+  border-radius: 20px;
+  padding: 8px 15px;
+  cursor: pointer;
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.3s;
+}
+
+/* Štýl pre hover stav tlačidla Schémy */
+.schemy-button:hover {
+  background: #3a3a4a;
+  text-decoration: none;
 }
 
 .profile-button,

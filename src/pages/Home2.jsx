@@ -16,6 +16,7 @@ const Home2 = () => {
     const [filteredParts, setFilteredParts] = useState([]);
     const [currentCategory, setCurrentCategory] = useState('');
     const [images, setImages] = useState({});
+    const [isSearchActive, setIsSearchActive] = useState(false); // Nová state premenná
 
     // Uloženie košíka do localStorage pri každej zmene
     useEffect(() => {
@@ -72,6 +73,9 @@ const Home2 = () => {
 
     const handleSearchResults = (results) => {
         setSearchResults(results);
+        setIsSearchActive(true); // Označíme, že je aktívne vyhľadávanie
+        setCurrentCategory(''); // Vyčistíme aktuálnu kategóriu
+        setFilteredParts([]); // Vyčistíme filtrované súčiastky
         results.forEach(part => {
             if (!images[part.part_id]) {
                 fetchImage(part.part_id);
@@ -80,7 +84,11 @@ const Home2 = () => {
     };
 
     const handleCategoryFilter = async (category) => {
+        // Vyčistíme vyhľadávacie výsledky a nastavíme kategóriu
+        setSearchResults([]);
+        setIsSearchActive(false);
         setCurrentCategory(category);
+        
         try {
             const response = await fetch(`http://127.0.0.1:8000/parts/search/category/${category}`);
             if (!response.ok) throw new Error('Chyba pri načítaní dát');
@@ -100,6 +108,30 @@ const Home2 = () => {
         navigate('/Suciastka', { state: { part } });
     };
 
+    // Funkcia na určenie, aké súčiastky zobraziť
+    const getDisplayedParts = () => {
+        if (isSearchActive) {
+            return searchResults;
+        } else if (filteredParts.length > 0) {
+            return filteredParts;
+        } else {
+            return parts;
+        }
+    };
+
+    // Funkcia na určenie nadpisu
+    const getDisplayTitle = () => {
+        if (isSearchActive) {
+            return searchResults.length > 0 ? 'Výsledky vyhľadávania' : 'Výsledky vyhľadávania';
+        } else if (currentCategory) {
+            return `${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)}`;
+        } else {
+            return 'Zoznam súčiastok';
+        }
+    };
+
+    const displayedParts = getDisplayedParts();
+
     return (
         <>
             <Header onSearchResults={handleSearchResults} />
@@ -108,7 +140,7 @@ const Home2 = () => {
                 
                 <div className="content">
                     <div className="categories">
-                        {['Pasívne súčiastky', 'Aktívne súčiastky', 'Mikrokontroléry', 'Logické prvky','Komponenty','Sety'].map((category, index) => (
+                        {['Pasívne súčiastky', 'Aktívne súčiastky', 'Adaptéry', 'Mechanické prvky','Pc komponenty','Sety'].map((category, index) => (
                             <div className="category-card" key={index}>
                                 <button onClick={() => handleCategoryFilter(category.toLowerCase())}>
                                     {category}
@@ -117,25 +149,33 @@ const Home2 = () => {
                         ))}
                     </div>
 
-                    <h2>{searchResults.length > 0 ? 'Výsledky vyhľadávania' : currentCategory ? `${currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} ` : 'Zoznam súčiastok'}</h2>
+                    <h2>{getDisplayTitle()}</h2>
 
                     <div className="suciastky-grid">
-                        {(searchResults.length > 0 ? searchResults : (filteredParts.length > 0 ? filteredParts : parts)).map((part) => (
-                            <div className="suciastka-box" key={part.part_id} onClick={() => handleSuciastkaClick(part)}>
-                                {images[part.part_id] && (
-                                    <img 
-                                        src={images[part.part_id]} 
-                                        alt={part.name} 
-                                        className="suciastka-image"
-                                        onError={(e) => e.target.style.display = 'none'}
-                                    />
-                                )}
-                                <h3>{part.name}</h3>
-                                <p><strong>Hodnota:</strong> {part.value}</p>
-                                <p><strong>Počet:</strong> {part.count} ks</p>
-                                <button className="add-btn" onClick={(e) => {e.stopPropagation(); addToCart(part);}}>Pridať</button>
-                            </div>
-                        ))}
+                        {displayedParts.length > 0 ? (
+                            displayedParts.map((part) => (
+                                <div className="suciastka-box" key={part.part_id} onClick={() => handleSuciastkaClick(part)}>
+                                    {images[part.part_id] && (
+                                        <img 
+                                            src={images[part.part_id]} 
+                                            alt={part.name} 
+                                            className="suciastka-image"
+                                            onError={(e) => e.target.style.display = 'none'}
+                                        />
+                                    )}
+                                    <h3>{part.name}</h3>
+                                    <p><strong>Hodnota:</strong> {part.value}</p>
+                                    <p><strong>Počet:</strong> {part.count} ks</p>
+                                    <button className="add-btn" onClick={(e) => {e.stopPropagation(); addToCart(part);}}>Pridať</button>
+                                </div>
+                            ))
+                        ) : (
+                            isSearchActive && (
+                                <div className="no-results">
+                                    <p>Súčiastka sa nenašla</p>
+                                </div>
+                            )
+                        )}
                     </div>
                 </div>
             </div>
