@@ -93,6 +93,16 @@ const Suciastka = () => {
                                 <h1>{part.name}</h1>
                                 <span className="suciastka-value">{part.value}</span>
                             </div>
+
+                            {/* Pridané kategórie pod názov */}
+                            <div className="suciastka-categories">
+                                {part.category && (
+                                    <p className="category-info"><strong>Kategória:</strong> {part.category}</p>
+                                )}
+                                {part.sub_category && (
+                                    <p className="subcategory-info"><strong>Podkategória:</strong> {part.sub_category}</p>
+                                )}
+                            </div>
                             
                             <p className="stock-info">Počet: {part.count} ks</p>
 
@@ -109,7 +119,7 @@ const Suciastka = () => {
 
                     <div className="suciastka-description">
                         <h3>Popis:</h3>
-                        <p>funguje</p>
+                        <p>{part.description || 'Popis nie je dostupný'}</p>
                     </div>
                 </div>
             </div>
