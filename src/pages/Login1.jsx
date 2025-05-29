@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import './Login1.css';
+import logo from '../pictures/Lucidus_logo.png';
 
 const Login1 = () => {
   const [credentials, setCredentials] = useState({
@@ -29,7 +30,7 @@ const Login1 = () => {
 
     try {
       if (isTeacher) {
-        const response = await fetch('http://127.0.0.1:8000/login', {
+        const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -64,67 +65,73 @@ const Login1 = () => {
   };
 
   return (
-    <div className="login-wrapper">
-      <div className="role-selector">
-        <button
-          className={isTeacher ? 'active' : ''}
-          onClick={() => setIsTeacher(true)}
-          type="button"
-        >
-          Učiteľ
-        </button>
-        <button
-          className={!isTeacher ? 'active' : ''}
-          onClick={() => setIsTeacher(false)}
-          type="button"
-        >
-          Žiak
-        </button>
+    <div className="login-page">
+      <div className="login-header">
+        <img src={logo} alt="Lucidus Logo" className="login-logo" />
       </div>
-    
-      <form className="login-form" onSubmit={handleSubmit}>
-        {isTeacher ? (
-          <>
+      
+      <div className="login-content">
+        <div className="role-selector">
+          <button
+            className={isTeacher ? 'active' : ''}
+            onClick={() => setIsTeacher(true)}
+            type="button"
+          >
+            Učiteľ
+          </button>
+          <button
+            className={!isTeacher ? 'active' : ''}
+            onClick={() => setIsTeacher(false)}
+            type="button"
+          >
+            Žiak
+          </button>
+        </div>
+      
+        <form className="login-form" onSubmit={handleSubmit}>
+          {isTeacher ? (
+            <>
+              <div className="form-group">
+                <label>Prihlasovacie meno:</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={credentials.username}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Heslo:</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={credentials.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </>
+          ) : (
             <div className="form-group">
-              <p>Prihlasovacie meno:</p>
+              <label>Tvoje meno:</label>
               <input
                 type="text"
-                name="username"
-                value={credentials.username}
+                name="name"
+                value={credentials.name}
                 onChange={handleChange}
                 required
               />
             </div>
-            <div className="form-group">
-              <p>Heslo:</p>
-              <input
-                type="password"
-                name="password"
-                value={credentials.password}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </>
-        ) : (
-          <div className="form-group">
-            <p>Tvoje meno:</p>
-            <input
-              type="text"
-              name="name"
-              value={credentials.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-        )}
+          )}
 
-        {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message">{error}</div>}
 
-        <button type="submit" disabled={loading}>
-          {loading ? 'Prihlasovanie...' : 'Prihlásiť sa →'}
-        </button>
-      </form>
+          <button type="submit" disabled={loading}>
+            {loading ? 'Prihlasovanie...' : 'Prihlásiť sa →'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

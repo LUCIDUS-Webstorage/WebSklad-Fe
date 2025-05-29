@@ -14,7 +14,8 @@ const Upravene = () => {
     name: '',
     value: '',
     count: '',
-    min_count: ''
+    min_count: '',
+    description: ''
   });
 
   useEffect(() => {
@@ -23,7 +24,7 @@ const Upravene = () => {
       return;
     }
 
-    fetch(`http://127.0.0.1:8000/image/${part.part_id}`)
+    fetch(`${process.env.REACT_APP_API_BASE_URL}/image/${part.part_id}`)
       .then(response => {
         if (response.ok) return response.blob();
         return null;
@@ -42,7 +43,8 @@ const Upravene = () => {
       name: part.name,
       value: part.value,
       count: part.count,
-      min_count: part.min_count || ''
+      min_count: part.min_count || '',
+      description: part.description || ''
     });
   }, [part, navigate]);
 
@@ -55,7 +57,7 @@ const Upravene = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/parts/update/${part.part_id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/update/${part.part_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +69,8 @@ const Upravene = () => {
           name: formData.name,
           value: formData.value,
           count: parseInt(formData.count),
-          min_count: formData.min_count ? parseInt(formData.min_count) : null
+          min_count: formData.min_count ? parseInt(formData.min_count) : null,
+          description: formData.description || null
         })
       });
 
@@ -173,6 +176,17 @@ const Upravene = () => {
                   value={formData.min_count}
                   onChange={handleChange}
                   min="0"
+                />
+              </div>
+
+              <div className={styles.formGroup}>
+                <label>Popis:</label>
+                <textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  rows="3"
+                  placeholder="Voliteľný popis súčiastky..."
                 />
               </div>
 

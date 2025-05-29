@@ -1,6 +1,6 @@
 .container {
   padding: 20px;
-  background-color: #0a0a32;
+  background-color: #1D1E22;
   color: white;
   min-height: 100vh;
 }
@@ -16,7 +16,7 @@
 }
 
 .backButton:hover {
-  color: #007bff;
+  color: #474c52;
 }
 
 .mainContent {
@@ -44,7 +44,7 @@
   justify-content: center;
   color: #aaa;
   font-size: 18px;
-  background-color: #151545;
+  background-color: #18181f;
   border-radius: 4px;
 }
 
@@ -70,12 +70,12 @@
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #334155;
-  background-color: #0f172a;
+  background-color: #334155;
   color: white;
 }
 
 .submitButton {
-  background-color: #61B9FB;
+  background-color: #eeb50b;
   color: white;
   border: none;
   padding: 12px 20px;
@@ -87,5 +87,5 @@
 }
 
 .submitButton:hover {
-  background-color: #4aa8e8;
+  background-color: #8a6803;
 }

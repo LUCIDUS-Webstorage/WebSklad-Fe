@@ -23,7 +23,8 @@ const Ucet = () => {
     name: '',
     value: '',
     count: '',
-    min_count: ''
+    min_count: '',
+    description: ''
   });
   const navigate = useNavigate();
 
@@ -33,7 +34,7 @@ const Ucet = () => {
 
   const fetchPartsList = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:8000/parts/list');
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/list`);
       if (!response.ok) throw new Error('Failed to fetch parts list');
       const data = await response.json();
       setPartsList(data);
@@ -45,7 +46,7 @@ const Ucet = () => {
   const fetchUsers = async (userIds) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/user/list/${userIds.join(',')}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/list/${userIds.join(',')}`, {
         headers: { 'token': token }
       });
       const data = await response.json();
@@ -66,7 +67,7 @@ const Ucet = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Nenašiel sa token');
 
-      const response = await fetch('http://127.0.0.1:8000/history', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/history`, {
         method: 'GET',
         headers: { 'token': token }
       });
@@ -74,7 +75,6 @@ const Ucet = () => {
       if (!response.ok) throw new Error('Nepodarilo sa načítať históriu');
 
       const data = await response.json();
-      // Zoradenie od najnovšej po najstaršiu
       setHistoryData(data.reverse());
       const userIds = [...new Set(data.map(item => item.user_id))];
       await fetchUsers(userIds);
@@ -93,7 +93,7 @@ const Ucet = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Nenašiel sa token');
 
-      const response = await fetch('http://127.0.0.1:8000/parts/borrowed/list', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/borrowed/list`, {
         method: 'GET',
         headers: { 'token': token }
       });
@@ -113,7 +113,7 @@ const Ucet = () => {
   const fetchUsersList = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/user/list/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/list/1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20`, {
         headers: { 'token': token }
       });
       const data = await response.json();
@@ -131,7 +131,7 @@ const Ucet = () => {
       const token = localStorage.getItem('token');
       if (!token) throw new Error('Nenašiel sa token');
 
-      const response = await fetch('http://127.0.0.1:8000/parts/create', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -143,7 +143,8 @@ const Ucet = () => {
           name: addPartData.name,
           value: addPartData.value,
           count: parseInt(addPartData.count),
-          min_count: addPartData.min_count ? parseInt(addPartData.min_count) : null
+          min_count: addPartData.min_count ? parseInt(addPartData.min_count) : null,
+          description: addPartData.description || null
         })
       });
 
@@ -155,7 +156,8 @@ const Ucet = () => {
         name: '',
         value: '',
         count: '',
-        min_count: ''
+        min_count: '',
+        description: ''
       });
       fetchPartsList();
     } catch (err) {
@@ -169,7 +171,7 @@ const Ucet = () => {
   const handleReturnPart = async (borrowedId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/parts/return/${borrowedId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/return/${borrowedId}`, {
         method: 'POST',
         headers: { 'token': token }
       });
@@ -185,7 +187,7 @@ const Ucet = () => {
     try {
       const token = localStorage.getItem('token');
       const borrowedIds = borrowedData.map(item => item.borrowed_id).join(',');
-      const response = await fetch(`http://127.0.0.1:8000/parts/return/${borrowedIds}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/return/${borrowedIds}`, {
         method: 'POST',
         headers: { 'token': token }
       });
@@ -200,7 +202,7 @@ const Ucet = () => {
   const handleDeletePart = async (partId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/parts/delete/${partId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/delete/${partId}`, {
         method: 'DELETE',
         headers: { 'token': token }
       });
@@ -220,7 +222,7 @@ const Ucet = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://127.0.0.1:8000/user/create', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/create`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +242,7 @@ const Ucet = () => {
   const handleDeleteUser = async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://127.0.0.1:8000/user/delete/${userId}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/user/delete/${userId}`, {
         method: 'DELETE',
         headers: { 'token': token }
       });
@@ -285,7 +287,7 @@ const Ucet = () => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/logout', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -536,6 +538,16 @@ const Ucet = () => {
                     value={addPartData.min_count}
                     onChange={handleAddPartChange}
                     min="0"
+                  />
+                </div>
+                <div className={styles["form-group"]}>
+                  <label>Popis:</label>
+                  <textarea
+                    name="description"
+                    value={addPartData.description}
+                    onChange={handleAddPartChange}
+                    rows="3"
+                    placeholder="Voliteľný popis súčiastky..."
                   />
                 </div>
                 <button type="submit" className={styles["submit-button"]}>

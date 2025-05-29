@@ -4,7 +4,7 @@ import './Zoznam.css';
 const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
     const [hasToken, setHasToken] = useState(false);
 
-    // Kontrola tokenu pri načítaní komponenty
+    
     useEffect(() => {
         const token = localStorage.getItem('token');
         setHasToken(!!token);
@@ -24,7 +24,7 @@ const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
         const counts = cart.map(item => item.count).join(',');
 
         try {
-            const response = await fetch(`http://127.0.0.1:8000/parts/borrow/${partIds}/${counts}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/borrow/${partIds}/${counts}`, {
                 method: 'POST',
                 headers: {
                     'token': token,
@@ -62,7 +62,7 @@ const Zoznam = ({ cart, updateCount, removeFromCart, setCart }) => {
                                 <button className="delete-btn" onClick={() => removeFromCart(item.uniqueKey)}>🗑️</button>
                             </div>
                         ))}
-                        {/* Tlačidlo sa zobrazuje len ak má token */}
+                        
                         {hasToken && (
                             <button 
                                 className="borrow-btn"

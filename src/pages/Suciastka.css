@@ -1,4 +1,3 @@
-/* Suciastka.css */
 .container {
   display: flex;
   align-items: flex-start;
@@ -6,7 +5,7 @@
   padding: 20px;
   max-width: 100%;
   overflow-x: hidden;
-  background-color: #0a0a32;
+  background-color: #1D1E22;
   color: white;
   min-height: 100vh;
 }
@@ -34,7 +33,7 @@
 }
 
 .back-button:hover {
-  color: #007bff;
+  color: #474c52;
 }
 
 .suciastka-main-content {
@@ -62,7 +61,7 @@
   justify-content: center;
   color: #aaa;
   font-size: 18px;
-  background-color: #151545;
+  background-color: #18181f;
   border-radius: 4px;
 }
 
@@ -87,7 +86,7 @@
 
 .suciastka-value {
   font-size: 1.5em;
-  color: #4CAF50;
+  color: #eeb50b;
 }
 
 .stock-info {
@@ -102,20 +101,20 @@
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
-  background-color: #007bff;
-  color: white;
+  background-color: #eeb50b;
+  color: black;
   width: 200px;
   margin-top: 10px;
 }
 
 .add-to-list-btn:hover {
-  background-color: #0056b3;
+  background-color: #8a6803;
 }
 
 .separator {
   width: 100%;
   height: 1px;
-  background-color: #2a2a5a;
+  background-color: #ffffff;
   margin: 20px 0;
 }
 

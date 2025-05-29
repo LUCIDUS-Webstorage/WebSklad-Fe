@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #0a0a32;
+  background-color: #003135;
   color: white;
   margin: 0;
   padding: 0;
@@ -8,6 +8,7 @@ body {
 }
 
 .container {
+  background-color: #1D1E22;
   display: flex;
   align-items: flex-start;
   gap: 20px;
@@ -31,9 +32,9 @@ body {
 }
 
 .category-card {
-  border: 1px solid white;
+  border: 1px solid #333333;
   border-radius: 12px;
-  background: #151545;
+  background: #5e5e61;
   text-align: center;
   min-height: 70px;
   display: flex;
@@ -64,10 +65,10 @@ body {
 }
 
 .suciastka-box {
-  border: 1px solid white;
+  border: 1px solid #333333;
   border-radius: 12px;
   padding: 10px;
-  background: #151545;
+  background: #5e5e61;
   text-align: center;
   min-height: 200px;
   display: flex;
@@ -88,8 +89,8 @@ body {
 }
 
 .add-btn {
-  background-color: #007bff;
-  color: white;
+  background-color: #eeb50b;
+  color: black;
   border: none;
   padding: 8px;
   cursor: pointer;
@@ -100,7 +101,7 @@ body {
 }
 
 .add-btn:hover {
-  background-color: #0056b3;
+  background-color: #8a6803;
 }
 
 .suciastka-image {
@@ -118,7 +119,7 @@ body {
     align-items: center;
     width: 100%;
     padding: 2rem;
-    grid-column: 1 / -1; /* Zaberie celý grid */
+    grid-column: 1 / -1; 
 }
 
 .no-results p {

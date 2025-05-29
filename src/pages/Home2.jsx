@@ -8,7 +8,7 @@ import Zoznam from "./Zoznam";
 const Home2 = () => {
     const [parts, setParts] = useState([]);
     const [cart, setCart] = useState(() => {
-        // Načítanie košíka z localStorage pri inicializácii
+        
         const savedCart = localStorage.getItem('cart');
         return savedCart ? JSON.parse(savedCart) : [];
     });
@@ -16,15 +16,15 @@ const Home2 = () => {
     const [filteredParts, setFilteredParts] = useState([]);
     const [currentCategory, setCurrentCategory] = useState('');
     const [images, setImages] = useState({});
-    const [isSearchActive, setIsSearchActive] = useState(false); // Nová state premenná
+    const [isSearchActive, setIsSearchActive] = useState(false); 
 
-    // Uloženie košíka do localStorage pri každej zmene
+    // Uloženie košíka do localStorage 
     useEffect(() => {
         localStorage.setItem('cart', JSON.stringify(cart));
     }, [cart]);
 
     useEffect(() => {
-        fetch("http://127.0.0.1:8000/parts/list")
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/list`)
             .then(response => response.json())
             .then(data => {
                 setParts(data);
@@ -36,7 +36,7 @@ const Home2 = () => {
     }, []);
 
     const fetchImage = (partId) => {
-        fetch(`http://127.0.0.1:8000/image/${partId}`)
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/image/${partId}`)
             .then(response => {
                 if (response.ok) return response.blob();
                 return null;
@@ -53,7 +53,7 @@ const Home2 = () => {
     const addToCart = (part) => {
         const newItem = {
             ...part,
-            count: 1, // Zmenené z 0 na 1, lebo väčšinou pridávame 1 kus
+            count: 1, 
             uniqueKey: `${part.part_id}-${Date.now()}`
         };
         setCart([...cart, newItem]);
@@ -73,9 +73,9 @@ const Home2 = () => {
 
     const handleSearchResults = (results) => {
         setSearchResults(results);
-        setIsSearchActive(true); // Označíme, že je aktívne vyhľadávanie
-        setCurrentCategory(''); // Vyčistíme aktuálnu kategóriu
-        setFilteredParts([]); // Vyčistíme filtrované súčiastky
+        setIsSearchActive(true); 
+        setCurrentCategory(''); 
+        setFilteredParts([]); 
         results.forEach(part => {
             if (!images[part.part_id]) {
                 fetchImage(part.part_id);
@@ -84,13 +84,13 @@ const Home2 = () => {
     };
 
     const handleCategoryFilter = async (category) => {
-        // Vyčistíme vyhľadávacie výsledky a nastavíme kategóriu
+        
         setSearchResults([]);
         setIsSearchActive(false);
         setCurrentCategory(category);
         
         try {
-            const response = await fetch(`http://127.0.0.1:8000/parts/search/category/${category}`);
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/search/category/${category}`);
             if (!response.ok) throw new Error('Chyba pri načítaní dát');
             const data = await response.json();
             setFilteredParts(data);

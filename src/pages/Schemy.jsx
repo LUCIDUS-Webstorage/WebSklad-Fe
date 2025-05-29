@@ -26,15 +26,15 @@ const Schemy = () => {
 
         const fetchAllData = async () => {
             try {
-                // 1. Načítanie zoznamu schém
-                const schemasResponse = await fetch('http://127.0.0.1:8000/schemas');
+                // Načítanie zoznamu schém
+                const schemasResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/schemas`);
                 if (!schemasResponse.ok) throw new Error('Chyba pri načítaní schém');
                 const schemasData = await schemasResponse.json();
 
-                // 2. Načítanie obrázkov schém
+                // Načítanie obrázkov schém
                 const schemaImagesTemp = {};
                 for (const schema of schemasData) {
-                    const imageResponse = await fetch(`http://127.0.0.1:8000/schema/image/${schema.schema_id}`);
+                    const imageResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/schema/image/${schema.schema_id}`);
                     if (imageResponse.ok) {
                         const blob = await imageResponse.blob();
                         const imageUrl = URL.createObjectURL(blob);
@@ -43,20 +43,20 @@ const Schemy = () => {
                     }
                 }
 
-                // 3. Zozbieranie všetkých unikátnych part_id
+                // Zozbieranie všetkých unikátnych part_id
                 const allPartIds = [...new Set(
                     schemasData.flatMap(schema => schema.parts.split(','))
                 )];
 
-                // 4. Načítanie detailov všetkých súčiastok naraz
+                // Načítanie detailov všetkých súčiastok naraz
                 const partsTemp = {};
                 const partDetailsPromises = allPartIds.map(async partId => {
-                    const partResponse = await fetch(`http://127.0.0.1:8000/parts/list/${partId}`);
+                    const partResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/list/${partId}`);
                     if (partResponse.ok) {
                         const partData = await partResponse.json();
                         
                         // Načítanie obrázka súčiastky
-                        const imageResponse = await fetch(`http://127.0.0.1:8000/image/${partId}`);
+                        const imageResponse = await fetch(`${process.env.REACT_APP_API_BASE_URL}/image/${partId}`);
                         if (imageResponse.ok) {
                             const imageBlob = await imageResponse.blob();
                             const imageUrl = URL.createObjectURL(imageBlob);
@@ -76,7 +76,7 @@ const Schemy = () => {
                     }
                 });
 
-                // 5. Pridanie počtov k súčiastkam podľa schém
+                
                 schemasData.forEach(schema => {
                     const partIds = schema.parts.split(',');
                     const partCounts = schema.part_counts.split(',');
@@ -106,7 +106,7 @@ const Schemy = () => {
 
         return () => {
             isMounted = false;
-            // Čistenie všetkých objektových URL
+            
             objectUrls.forEach(url => URL.revokeObjectURL(url));
         };
     }, []);

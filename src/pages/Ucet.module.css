@@ -6,7 +6,7 @@
 
 .left-menu {
   width: 280px;
-  background-color: #0C1459;
+  background-color: #1D1E22;
   padding: 25px;
   color: white;
   display: flex;
@@ -23,9 +23,10 @@
 .avatar {
   width: 80px;
   height: 80px;
+  border: 2px solid black;
   border-radius: 50%;
-  background-color: #61B9FB;
-  color: white;
+  background-color: #eeb50b;
+  color: black;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -41,9 +42,9 @@
 }
 
 .logout-button {
-  background-color: transparent;
-  color: white;
-  border: 1px solid #61B9FB;
+  background-color: #eeb50b;
+  color: black;
+  border: 1px solid black;
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
@@ -56,7 +57,7 @@
 }
 
 .logout-button:hover {
-  background-color: rgba(97, 185, 251, 0.1);
+  background-color: #8a6803;
   text-decoration: none;
 }
 
@@ -85,26 +86,26 @@
 }
 
 .menu-button:hover {
-  background-color: #334155;
+  background-color: #8a6803;
 }
 
 .menu-button.active {
-  background-color: #61B9BF;
-  color: white;
+  background-color: #eeb50b;
+  color: black;
 }
 
 .right-content {
   flex: 1;
   padding: 30px;
   overflow-y: auto;
-  background-color: #0C1459;
+  background-color: #1D1E22;
 }
 
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background-color: #1e293b;
+  background-color: #373738;
   color: white;
   border-radius: 12px;
   overflow: hidden;
@@ -117,7 +118,8 @@ th, td {
 }
 
 th {
-  background-color: #0056b3;
+  background-color: #eeb50b;
+  color: black;
   font-weight: 500;
 }
 
@@ -140,7 +142,7 @@ tr:last-child td {
 }
 
 .form-container {
-  background-color: #1e293b;
+  background-color: #373738;
   padding: 20px;
   border-radius: 12px;
   max-width: 600px;
@@ -158,17 +160,17 @@ tr:last-child td {
 }
 
 .form-group input {
-  width: 100%;
+  width: 97%;
   padding: 10px;
   border-radius: 6px;
   border: 1px solid #334155;
-  background-color: #0f172a;
+  background-color: #5e5e61;
   color: white;
 }
 
 .submit-button {
-  background-color: #61B9FB;
-  color: white;
+  background-color: #eeb50b;
+  color: black;
   border: none;
   padding: 10px 20px;
   border-radius: 6px;
@@ -179,7 +181,7 @@ tr:last-child td {
 }
 
 .submit-button:hover {
-  background-color: #4aa8e8;
+  background-color: #8a6803;
 }
 
 .submit-button.delete {
@@ -197,7 +199,7 @@ tr:last-child td {
 
 .users-create, .users-delete {
   flex: 1;
-  background-color: #1e293b;
+  background-color: #373738;
   padding: 20px;
   border-radius: 12px;
 }
@@ -250,4 +252,12 @@ tr:last-child td {
 
 .delete-button:hover {
   background-color: #dc2626;
+}
+.edit-button {
+  background-color: #eeb50b;
+  color: black;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }

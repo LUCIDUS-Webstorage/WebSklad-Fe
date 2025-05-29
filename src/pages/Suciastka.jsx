@@ -19,7 +19,7 @@ const Suciastka = () => {
             return;
         }
 
-        fetch(`http://127.0.0.1:8000/image/${part.part_id}`)
+        fetch(`${process.env.REACT_APP_API_BASE_URL}/image/${part.part_id}`)
             .then(response => {
                 if (response.ok) return response.blob();
                 return null;
@@ -94,7 +94,7 @@ const Suciastka = () => {
                                 <span className="suciastka-value">{part.value}</span>
                             </div>
 
-                            {/* Pridané kategórie pod názov */}
+                            
                             <div className="suciastka-categories">
                                 {part.category && (
                                     <p className="category-info"><strong>Kategória:</strong> {part.category}</p>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import styles from './header.module.css';
+import logo from '../../../pictures/Lucidus_logo.png'; 
 
 const Header = ({ onSearchResults = () => {} }) => {
   const [query, setQuery] = useState('');
   const [hasToken, setHasToken] = useState(false);
   const navigate = useNavigate();
 
-  // Kontrola tokenu pri načítaní komponenty
   useEffect(() => {
     const token = localStorage.getItem('token');
     setHasToken(!!token);
@@ -16,7 +16,7 @@ const Header = ({ onSearchResults = () => {} }) => {
   const handleSearch = async () => {
     if (!query.trim()) return;
     try {
-      const response = await fetch(`http://127.0.0.1:8000/parts/search/${query}`);
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/parts/search/${query}`);
       if (!response.ok) {
         throw new Error('Chyba pri načítaní dát');
       }
@@ -38,7 +38,7 @@ const Header = ({ onSearchResults = () => {} }) => {
         return;
       }
 
-      const response = await fetch('http://127.0.0.1:8000/logout', {
+      const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/logout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ const Header = ({ onSearchResults = () => {} }) => {
         localStorage.removeItem('username');
         localStorage.removeItem('role');
         localStorage.removeItem('cart');
-        setHasToken(false); // Aktualizujeme stav
+        setHasToken(false);
         navigate('/');
       } else {
         console.error('Logout failed');
@@ -65,10 +65,14 @@ const Header = ({ onSearchResults = () => {} }) => {
   return (
     <div className={styles.header}>
       <div className={styles.left}>
+        <img 
+          src={logo} 
+          alt="Lucidus Logo" 
+          className={styles.logo}
+        />
         <NavLink to="/home" className={styles.title}>LUCIDUS</NavLink>
       </div>
       
-      {/* Search sa zobrazuje vždy */}
       <div className={styles["search-container"]}>
         <input
           type="text"
@@ -82,19 +86,16 @@ const Header = ({ onSearchResults = () => {} }) => {
       </div>
       
       <div className={styles.buttons}>
-        {/* Nové tlačidlo pre Schémy - zobrazuje sa vždy */}
         <NavLink className={styles["schemy-button"]} to="/Schemy">
           Schémy
         </NavLink>
         
-        {/* Účet button sa zobrazuje len ak má token */}
         {hasToken && (
           <NavLink className={styles["profile-button"]} to={'/Ucet'}>
             {localStorage.getItem('username') || 'Užívateľ'} 👤
           </NavLink>
         )}
         
-        {/* Logout/Odísť button sa zobrazuje vždy */}
         <NavLink 
           className={styles["logout-button"]} 
           to="/" 
